@@ -53,11 +53,12 @@ int main()
     signal( SIGINT, SIG_DFL );
     int i, maxi, nfds;
     ssize_t n;
-    char line[MAXLINE];
+    char recvMsg[MAXLINE];
+    char sendMsg[] = "I am server";
     socklen_t clilen;
     //声明epoll_event结构体的变量, ev用于注册事件, events数组用于回传要处理的事件
     struct epoll_event ev,events[20];
-    //生成用于处理accept的epoll专用的文件描述符, 指定生成描述符的最大范围为256 
+    //生成用于处理accept的epoll专用的文件描述符, 指定生成描述符的最大范围为256 
     epfd = epoll_create(256);
     struct sockaddr_in clientaddr;
     struct sockaddr_in serveraddr;
@@ -101,7 +102,7 @@ int main()
                 {
                     continue;
                 }
-                if ((n=read(sockfd, line, MAXLINE)) < 0) // 这里和IOCP不同
+                if ((n=read(sockfd, recvMsg, MAXLINE)) < 0) // 这里和IOCP不同
                 {
                     if(errno == ECONNRESET)
                     {
@@ -119,15 +120,15 @@ int main()
                     events[i].data.fd = -1;
                 }
                 ev.data.fd=sockfd; //设置用于写操作的文件描述符
-                ev.events=EPOLLOUT | EPOLLET;  //设置用于注测的写操作事件 
+                ev.events=EPOLLOUT | EPOLLET;  //设置用于注测的写操作事件 
                 //修改sockfd上要处理的事件为EPOLLOUT
                 epoll_ctl(epfd, EPOLL_CTL_MOD, sockfd, &ev);
-                printf("recv %s\n",line);
+                printf("recv %s\n",recvMsg);
             }
             else if(events[i].events&EPOLLOUT)//写事件
             {
                 sockfd = events[i].data.fd;
-                write(sockfd, line, MAXLINE);
+                write(sockfd, sendMsg, sizeof(sendMsg));
                 ev.data.fd = sockfd; //设置用于读操作的文件描述符
                 ev.events = EPOLLIN | EPOLLET; //设置用于注册的读操作事件
                 //修改sockfd上要处理的事件为EPOLIN
