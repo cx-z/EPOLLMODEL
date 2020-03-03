@@ -6,9 +6,9 @@ void sig_handler( int sig )
 {
     if ( sig == SIGINT)
     {
-        center.online = false;
-        close(center.listenfd);
-        close(center.epollfd);
+        online = false;
+        close(listenfd);
+        close(epollfd);
         exit(0);
     }
 }
@@ -16,8 +16,9 @@ void sig_handler( int sig )
 
 int main()
 {
-    signal( SIGINT, sig_handler );
-    //signal( SIGINT, SIG_DFL );
+    //signal( SIGINT, sig_handler );
+    signal( SIGINT, SIG_DFL );
+    //center.server_init();
     center.monitor();
 
     return 0;
