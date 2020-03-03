@@ -17,6 +17,7 @@ void TaskPool::start()
         handlerpool.push_back(std::thread(&TaskPool::exectask,this, i));
     for(int i=0;i<handlerpool.size();i++)
         handlerpool[i].detach();
+    std::cout<<"threadpool is ready"<<std::endl;
 }
 
 void TaskPool::exectask(int i)

@@ -38,14 +38,13 @@ HandleError Handler::elisten(struct epoll_event &hev)
     {
         perror("connfd<0");
         return CONNECTERR;
-
-        setnonblocking(connfd); //把客户端的socket设置为非阻塞方式
-        char *str = inet_ntoa(clientaddr.sin_addr);
-        std::cout << "connect from " << str << std::endl;
-        hev.data.fd = connfd;                            //设置用于读操作的文件描述符
-        hev.events = EPOLLIN | EPOLLET;                  //设置用于注测的读操作事件
-        epoll_ctl(epollfd, EPOLL_CTL_ADD, connfd, &hev); //注册ev事件
     }
+    setnonblocking(connfd); //把客户端的socket设置为非阻塞方式
+    char *str = inet_ntoa(clientaddr.sin_addr);
+    std::cout << "connect from " << str << std::endl;
+    hev.data.fd = connfd;                            //设置用于读操作的文件描述符
+    hev.events = EPOLLIN | EPOLLET;                  //设置用于注测的读操作事件
+    epoll_ctl(epollfd, EPOLL_CTL_ADD, connfd, &hev); //注册ev事件
     return NORMAL;
 }
 HandleError Handler::eread(struct epoll_event & hev)
@@ -84,7 +83,7 @@ HandleError Handler::eread(struct epoll_event & hev)
 HandleError Handler::ewrite(struct epoll_event &hev)
 {
     int sockfd = hev.data.fd;
-    write(sockfd, sendbuf, BUFFSIZE);
+    write(sockfd, sendbuf, strlen(sendbuf));
     hev.data.fd = sockfd;           //设置用于读操作的文件描述符
     hev.events = EPOLLIN | EPOLLET; //设置用于注册的读操作事件
     //修改sockfd上要处理的事件为EPOLIN
