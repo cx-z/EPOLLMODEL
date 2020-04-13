@@ -66,7 +66,6 @@ void Server::server_init()
 
     epollfd = epoll_create(256);
     online = true;
-    epoll_ctl(epollfd, EPOLL_CTL_ADD, listenfd, &ev); //注册epoll事件
 
     ev.data.fd = listenfd;                            //设置与要处理的事件相关的文件描述符
     ev.events = EPOLLIN | EPOLLET;                    //设置要处理的事件类型
@@ -75,5 +74,4 @@ void Server::server_init()
 
     bind(listenfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
     listen(listenfd, LISTENQ);
-    //std::cout << "Server's epollfd is " << epollfd << std::endl;
 }
