@@ -4,15 +4,20 @@
 
 enum TaskType
 {
-    LISTEN,READ,WRITE
+    LISTEN,
+    READ,
+    WRITE
 };
 
 enum HandleError
 {
-    NORMAL, CONNECTERR, READERR, WRITEERR
+    NORMAL,
+    CONNECTERR,
+    READERR,
+    WRITEERR
 };
 
-class Handler: public Server
+class Handler
 {
 public:
     Handler();
@@ -20,9 +25,12 @@ public:
     HandleError eread(struct epoll_event &hev);
     HandleError ewrite(struct epoll_event &hev);
     HandleError elisten(struct epoll_event &hev);
+
 private:
-    struct sockaddr_in clientaddr; // 
-    socklen_t clilen; //
-    char recvbuf[BUFFSIZE]; //
+    struct sockaddr_in clientaddr;          //
+    socklen_t clilen;                       //
+    char recvbuf[BUFFSIZE];                 //
     char sendbuf[BUFFSIZE] = "I am server"; //
+    int connfd;
+    int sockfd;
 };
